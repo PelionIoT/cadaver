@@ -98,6 +98,7 @@ struct session session;
 ne_ssl_client_cert *client_cert;
 
 int tolerant; /* tolerate DAV-enabledness failure */
+int accept_cert = 0;
 
 /* Current output state */
 static enum out_state {
@@ -129,6 +130,7 @@ static void usage(void)
 "  Port defaults to 80, path defaults to '/'\n"
 "Options:\n"
 "  -t, --tolerant            Allow cd/open into non-WebDAV enabled collection.\n"
+"  -A, --accept              Accept the SSL cert regardless (for snake-oil certificates)\n"
 "  -r, --rcfile=FILE         Read script from FILE instead of ~/.cadaverrc.\n"
 "  -p, --proxy=PROXY[:PORT]  Use proxy host PROXY and optional proxy port PORT.\n"
 "  -V, --version             Display version information.\n"
@@ -210,8 +212,11 @@ tmp = ne_ssl_readable_dname(dn); printf(str, tmp); free(tmp)
     printf(_("Certificate is valid from %s to %s\n"), from, to);
 
     if (isatty(STDIN_FILENO)) {
+      if(!accept_cert) {
 	printf(_("Do you wish to accept the certificate? (y/n) "));
 	return !yesno();
+      } else
+	return 0;
     } else {
 	printf(_("Certificate rejected.\n"));
 	return -1;
@@ -440,14 +445,16 @@ static void parse_args(int argc, char **argv)
 	{ "help", no_argument, NULL, 'h' },
 	{ "proxy", required_argument, NULL, 'p' },
 	{ "tolerant", no_argument, NULL, 't' },
+        { "accept", no_argument, NULL, 'A' },
 	{ "rcfile", required_argument, NULL, 'r' },
 	{ 0, 0, 0, 0 }
     };
     int optc;
-    while ((optc = getopt_long(argc, argv, "ehtp:r:V", opts, NULL)) != -1) {
+    while ((optc = getopt_long(argc, argv, "ehtp:r:VA", opts, NULL)) != -1) {
 	switch (optc) {
 	case 'h': usage(); exit(-1);
 	case 'V': execute_about(); exit(-1);
+	case 'A': accept_cert = 1; break;
 	case 'p': set_proxy(optarg); break;
 	case 't': tolerant = 1; break;
 	case 'r': rcfile = strdup(optarg); break;
