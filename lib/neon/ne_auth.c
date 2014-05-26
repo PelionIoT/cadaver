@@ -77,6 +77,8 @@
 #include "ne_sspi.h"
 #endif
 
+#undef HAVE_NTLM
+
 #ifdef HAVE_NTLM
 #include "ne_ntlm.h"
 #endif
