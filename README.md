@@ -3,6 +3,8 @@ cadaver
 
 Cadaver unofficial repo - based on cadaver-0.23.3
 
+cadaver is a WebDAV command line client.
+
 Original can be found here: http://www.webdav.org/cadaver/
 
 #### Changes
