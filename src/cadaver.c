@@ -211,12 +211,12 @@ tmp = ne_ssl_readable_dname(dn); printf(str, tmp); free(tmp)
     ne_ssl_cert_validity(c, from, to);
     printf(_("Certificate is valid from %s to %s\n"), from, to);
 
+    if(accept_cert)
+      return 0;
+
     if (isatty(STDIN_FILENO)) {
-      if(!accept_cert) {
 	printf(_("Do you wish to accept the certificate? (y/n) "));
 	return !yesno();
-      } else
-	return 0;
     } else {
 	printf(_("Certificate rejected.\n"));
 	return -1;
